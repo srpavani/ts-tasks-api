@@ -1,0 +1,25 @@
+{
+  "name": "api-node",
+  "version": "1.0.0",
+  "main": "./lib/index.js",
+  "scripts": {
+    "start:dev": "nodemon --watch \"src/\" --exec \"npx ts-node src/index.ts\"",
+    "build": "tsc",
+    "lint": "tslint -c tslint.json src/**/*.ts",
+    "prepublish": "npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "tslint": "^5.20.1",
+    "typescript": "^5.8.2"
+  },
+  "files": [
+    "./bin/*",
+    "./lib/*"
+  ],
+  "typings": "./lib/index.d.ts"
+}
