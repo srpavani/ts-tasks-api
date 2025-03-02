@@ -1,6 +1,6 @@
 # Task Management API
 
-Uma API RESTful para gerenciamento de tarefas e usuários construída com Node.js, Express, TypeScript e MongoDB.
+Uma API RESTful para gerenciamento de tarefas e usuários construída com Node.js, Express, TypeScript e MongoDB, containerizada com Docker.
 
 ## Funcionalidades
 
@@ -8,83 +8,79 @@ Uma API RESTful para gerenciamento de tarefas e usuários construída com Node.j
 - Operações CRUD para usuários e tarefas
 - Gerenciamento de status de tarefas
 - Integração com MongoDB
-- Suporte a TypeScript
 - Documentação Swagger
+- Containerização com Docker
 - Testes unitários
 - Versionamento de API (v1)
 
 ## Pré-requisitos
 
-- Node.js (v14 ou superior)
-- MongoDB
-- npm ou yarn
+- Docker
+- Docker Compose
+- Git
 
-## Instalação
+## Instalação e Execução com Docker
 
-1. Clone o repositório
-2. Instale as dependências:
+1. Clone o repositório:
 
 ```bash
-npm install
+git clone [url-do-repositorio]
+cd ts-tasks-api
 ```
 
-3. Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+2. Inicie os containers com Docker Compose:
 
-```env
+```bash
+docker compose up -d
+```
+
+A aplicação estará disponível em:
+
+- API: http://localhost:8080/api/v1
+- Documentação Swagger: http://localhost:8080/api-docs
+
+Para parar os containers:
+
+```bash
+docker compose down
+```
+
+Para remover os volumes (isso apagará os dados do MongoDB):
+
+```bash
+docker compose down -v
+```
+
+## Estrutura do Docker
+
+O projeto utiliza dois containers:
+
+1. **API (Node.js)**
+
+   - Imagem base: node:18-alpine
+   - Porta: 8080
+   - Variáveis de ambiente configuráveis
+   - Compilação TypeScript automática
+
+2. **MongoDB**
+   - Imagem: mongo:latest
+   - Porta: 27017
+   - Inicialização automática do banco
+
+## Variáveis de Ambiente
+
+As variáveis de ambiente são configuradas no `docker-compose.yml`:
+
+```yaml
+# API
 PORT=8080
-MONGO_URL=sua-url-do-mongodb
-JWT_SECRET=sua-chave-secreta-para-jwt
-```
+MONGO_URL=mongodb://root:example@mongodb:27017/task-api?authSource=admin
+JWT_SECRET=seu_jwt_secret
 
-## Executando a Aplicação
-
-```bash
-npm start
-```
-
-## Testes
-
-O projeto utiliza Jest para testes unitários. Você pode executar os testes de diferentes maneiras:
-
-```bash
-# Executar todos os testes
-npm test
-
-# Executar testes em modo watch (observa alterações)
-npm run test:watch
-
-# Executar testes com relatório de cobertura
-npm run test:coverage
-```
-
-### Estrutura dos Testes
-
-Os testes estão organizados na pasta `src/test` e seguem a seguinte estrutura:
-
-```
-src/test/
-├── setup.ts              # Configuração global dos testes
-├── TaskService.test.ts   # Testes do serviço de tarefas
-└── UserService.test.ts   # Testes do serviço de usuários
-```
-
-### Comandos Úteis no Modo Watch
-
-Ao executar `npm run test:watch`, você terá acesso a um menu interativo com as seguintes opções:
-
-- `a` - Executar todos os testes
-- `f` - Executar apenas testes que falharam
-- `p` - Filtrar testes por nome do arquivo
-- `t` - Filtrar testes por nome do teste
-- `q` - Sair do modo watch
-- `Enter` - Executar os testes novamente
-
-## Documentação da API
-
-A documentação completa da API está disponível através do Swagger UI em:
-
-```
-http://localhost:8080/api-docs
+# MongoDB
+MONGO_INITDB_ROOT_USERNAME=root
+MONGO_INITDB_ROOT_PASSWORD=example
+MONGO_INITDB_DATABASE=task-api
 ```
 
 ## Endpoints da API (v1)
@@ -114,41 +110,81 @@ http://localhost:8080/api-docs
 - `em_andamento`
 - `concluida`
 
-## Autenticação
+## Desenvolvimento Local
 
 Todas as rotas, exceto `/api/v1/auth/register` e `/api/v1/auth/login`, requerem autenticação JWT.
 Inclua o token JWT no header Authorization:
 
+1. Instale as dependências:
+
+```bash
+npm install
 ```
-Authorization: Bearer <seu-token>
+
+2. Crie um arquivo `.env` na raiz do projeto:
+
+```env
+PORT=8080
+MONGO_URL=sua-url-do-mongodb
+JWT_SECRET=sua-chave-secreta-para-jwt
+```
+
+3. Execute em modo desenvolvimento:
+
+```bash
+npm run dev
+```
+
+## Testes
+
+Execute os testes:
+
+```bash
+# No container
+docker compose exec app npm test
+
+# Localmente
+npm test
+```
+
+## Logs
+
+Para visualizar logs dos containers:
+
+```bash
+# Todos os logs
+docker compose logs
+
+# Logs da API
+docker compose logs app
+
+# Logs do MongoDB
+docker compose logs mongodb
+
+# Logs em tempo real
+docker compose logs -f
 ```
 
 ## Estrutura do Projeto
 
 ```
-src/
-├── controllers/     # Controladores da aplicação
-├── models/         # Modelos do Mongoose
-├── routes/         # Rotas da API
-│   └── v1/         # Rotas da versão 1
-├── services/       # Lógica de negócios
-├── middleware/     # Middlewares
-├── constants/      # Constantes e mensagens
-└── test/          # Testes unitários
+.
+├── Dockerfile              # Configuração do container da API
+├── docker-compose.yml      # Configuração dos serviços
+├── mongo-init.js          # Script de inicialização do MongoDB
+├── src/
+│   ├── controllers/       # Controladores da aplicação
+│   ├── models/           # Modelos do Mongoose
+│   ├── routes/           # Rotas da API
+│   │   └── v1/          # Rotas da versão 1
+│   ├── services/        # Lógica de negócios
+│   ├── middleware/      # Middlewares
+│   ├── constants/       # Constantes e mensagens
+│   └── test/           # Testes unitários
+└── package.json
 ```
 
-## Scripts Disponíveis
+## Autenticação
 
-```bash
-# Iniciar a aplicação em modo desenvolvimento
-npm run dev
-
-# Executar testes
-npm test
-
-# Executar testes em modo watch
-npm run test:watch
-
-# Executar testes com cobertura
-npm run test:coverage
-```
+Todas as rotas (exceto `/api/v1/auth/register` e `/api/v1/auth/login`) requerem autenticação JWT.
+Inclua o token JWT no header Authorization:
