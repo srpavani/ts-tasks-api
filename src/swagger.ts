@@ -7,7 +7,7 @@ export const swaggerDocument = {
     },
     servers: [
         {
-            url: 'http://localhost:8080/api/v1',
+            url: `http://localhost:${process.env.PORT || '8080'}/api/v1`,
             description: 'Servidor Local - v1'
         }
     ],
