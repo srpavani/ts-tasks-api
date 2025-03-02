@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "build": "tsc --project tsconfig.json",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
