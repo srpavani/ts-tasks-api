@@ -2,6 +2,8 @@
 
 Uma API RESTful para gerenciamento de tarefas e usuários construída com Node.js, Express, TypeScript e MongoDB.
 
+#Se preferir usar o docker, existe uma branch chamada docker
+
 ## Funcionalidades
 
 - Autenticação de usuários com JWT
