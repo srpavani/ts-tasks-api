@@ -1,13 +1,8 @@
-# Use uma imagem leve do Node.js
 FROM node:18-alpine
 
-# Define o diretório de trabalho
 WORKDIR /usr/src/app
 
-# Copia apenas os arquivos necessários para instalar dependências
 COPY package*.json ./
-
-# Instala todas as dependências, incluindo TypeScript
 RUN npm install
 
 COPY . .
@@ -15,10 +10,16 @@ COPY . .
 # builda o codigo
 RUN npm run build
 
+# remove depedencia de dev
+RUN npm prune --production && \
+    rm -rf src/ && \
+    rm -rf node_modules/typescript && \
+    rm -rf node_modules/@types
+
 
 USER node
 
-# Expoe a porta do app
+# expoe a porta do app
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
