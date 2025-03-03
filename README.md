@@ -10,8 +10,28 @@ Uma API RESTful para gerenciamento de tarefas e usuários construída com Node.j
 - Integração com MongoDB
 - Documentação Swagger
 - Containerização com Docker
+- Validação de dados com Zod
 - Testes unitários
 - Versionamento de API (v1)
+
+## Validação de Dados
+
+A API utiliza Zod para validação de dados, garantindo a integridade e consistência das informações. Regras de validação incluem:
+
+### Usuários
+
+- Username: 3-50 caracteres
+- Email: formato válido, 5-100 caracteres
+- Senha: 6-100 caracteres, deve conter:
+  - Pelo menos uma letra maiúscula
+  - Pelo menos uma letra minúscula
+  - Pelo menos um número
+
+### Tarefas
+
+- Título: 3-100 caracteres
+- Descrição: 10-500 caracteres
+- Status: enum ('pendente', 'em_andamento', 'concluida')
 
 ## Pré-requisitos
 
@@ -179,9 +199,60 @@ docker compose logs -f
 │   │   └── v1/          # Rotas da versão 1
 │   ├── services/        # Lógica de negócios
 │   ├── middleware/      # Middlewares
+│   ├── schemas/         # Schemas de validação (Zod)
 │   ├── constants/       # Constantes e mensagens
 │   └── test/           # Testes unitários
 └── package.json
+```
+
+## Exemplos de Requisições
+
+### Criar Usuário
+
+```json
+POST /api/v1/auth/register
+{
+    "username": "JohnDoe",
+    "email": "john@example.com",
+    "password": "Test123"
+}
+```
+
+### Criar Tarefa
+
+```json
+POST /api/v1/tasks
+{
+    "title": "Implementar API",
+    "description": "Desenvolver endpoints da API REST",
+    "status": "pendente"
+}
+```
+
+### Atualizar Status da Tarefa
+
+```json
+PATCH /api/v1/tasks/:id/status
+{
+    "status": "em_andamento"
+}
+```
+
+## Respostas de Erro
+
+A API retorna respostas de erro consistentes:
+
+```json
+{
+  "status": "error",
+  "message": "Erro de validação",
+  "errors": [
+    {
+      "field": "email",
+      "message": "Email inválido"
+    }
+  ]
+}
 ```
 
 ## Autenticação
