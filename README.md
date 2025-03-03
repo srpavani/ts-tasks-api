@@ -10,7 +10,6 @@ Uma API RESTful para gerenciamento de tarefas e usuários construída com Node.j
 - Integração com MongoDB
 - Documentação Swagger
 - Containerização com Docker
-- Validação de dados com Zod
 - Testes unitários
 - Versionamento de API (v1)
 
