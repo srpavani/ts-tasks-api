@@ -119,6 +119,24 @@ export const swaggerDocument = {
                 },
                 required: ['title', 'description']
             },
+            TaskUpdateInput: {
+                type: 'object',
+                properties: {
+                    title: {
+                        type: 'string',
+                        description: 'Título da tarefa'
+                    },
+                    description: {
+                        type: 'string',
+                        description: 'Descrição da tarefa'
+                    },
+                    status: {
+                        type: 'string',
+                        enum: ['pendente', 'em_andamento', 'concluida'],
+                        description: 'Status da tarefa'
+                    }
+                }
+            },
             ErrorResponse: {
                 type: 'object',
                 properties: {
@@ -409,14 +427,25 @@ export const swaggerDocument = {
             ],
             put: {
                 tags: ['Tarefas'],
-                summary: 'Atualizar tarefa',
+                summary: 'Atualizar uma tarefa',
                 security: [{ bearerAuth: [] as string[] }],
+                parameters: [
+                    {
+                        name: 'id',
+                        in: 'path',
+                        required: true,
+                        description: 'ID da tarefa',
+                        schema: {
+                            type: 'string'
+                        }
+                    }
+                ],
                 requestBody: {
                     required: true,
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Task'
+                                $ref: '#/components/schemas/TaskUpdateInput'
                             }
                         }
                     }
@@ -427,10 +456,31 @@ export const swaggerDocument = {
                         content: {
                             'application/json': {
                                 schema: {
-                                    $ref: '#/components/schemas/Task'
+                                    type: 'object',
+                                    properties: {
+                                        message: {
+                                            type: 'string'
+                                        },
+                                        task: {
+                                            $ref: '#/components/schemas/Task'
+                                        }
+                                    }
                                 }
                             }
                         }
+                    },
+                    400: {
+                        description: 'Dados inválidos',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    $ref: '#/components/schemas/ErrorResponse'
+                                }
+                            }
+                        }
+                    },
+                    401: {
+                        description: 'Não autorizado'
                     },
                     404: {
                         description: 'Tarefa não encontrada'
